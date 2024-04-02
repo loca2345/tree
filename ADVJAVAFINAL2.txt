@@ -1,0 +1,1727 @@
+-------------PRACTICAL 1: JDBC STATEMENT ------------------
+
+->insert,update,delete,display
+
+
+package practical1;
+import java.sql.*;
+
+public class Practical1 {
+
+    public static void main(String[] args) throws ClassNotFoundException,SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con = DriverManager.getConnection
+        ("jdbc:mysql://localhost/bhavya_22","root","Doshi@12");
+        Statement st = con.createStatement();
+        String sql = "insert into student values (21,20,'vaibhavi'),"
+                + "(24,21,'gayatri')";
+        String sqlu = "Update student set name = 'vinaykarnuk' where rollno = 24 ";
+        String sqld = "Delete from student where rollno = 24";
+        String sqldisplay = "select * from student";
+        int result = st.executeUpdate(sql);
+            if(result>0)
+            System.out.println("\n\t Record Inserted");
+            
+            ResultSet rs = st.executeQuery(sqldisplay);
+            while (rs.next()){
+            System.out.println("\n\t "+rs.getInt(1));
+            System.out.println("\n\t "+rs.getString(2));
+            System.out.println("\n\t "+rs.getString(3));
+            System.out.println("\n\t --------------------");
+            }
+        con.close();
+        
+    }
+    
+}
+        
+   
+
+-----------------------PRACTICAL 2:PREPARED STATEMENT----------------
+
+->insert,update,delete,display
+
+
+
+package practical2;
+import java.sql.*;
+public class Practical2 {
+
+    
+    public static void main(String[] args) throws Exception{
+        try{
+        
+        Class.forName("com.mysql.jdbc.Driver");
+             Connection con = DriverManager.getConnection("jdbc:mysql://localhost/bhavya_22","root","Doshi@12");
+                 String sql = "insert into employee values(?,?,?)";
+                 String sqlu = "Update employee set empname=? where empid=?";
+                 String sqld = "Delete from employee where empid=?";
+                 String sqldisplay = "select * from employee";
+                PreparedStatement ps = con.prepareStatement(sqldisplay);
+                /*ps.setInt(1,101);
+                ps.setString(2,"rohit");
+                ps.setInt(3,20000);
+                ps.executeUpdate();
+                ps.setInt(1,102);
+                ps.setString(2,"vivek");
+                ps.setInt(3,15000);
+                ps.executeUpdate();*/
+                //update
+                /*ps.setString(1,"ankit");
+                ps.setInt(2,101);*/
+                //delete
+                /*ps.setInt(1, 105);
+                ps.executeUpdate();*/
+                //display
+                
+                
+            ResultSet rs = ps.executeQuery(sqldisplay);
+            while (rs.next()){
+            System.out.println("\n\t "+rs.getInt(1));
+            System.out.println("\n\t "+rs.getString(2));
+            System.out.println("\n\t "+rs.getInt(3));
+            System.out.println("\n\t --------------------");
+            }
+                
+              
+                int result = ps.executeUpdate();
+                if (result>0)
+                    System.out.println("\n\t Record Inserted");
+        }
+                catch
+                (ClassNotFoundException | SQLException ex){
+                    
+                System.out.println(ex.toString());
+            }
+    }
+    
+
+
+
+
+
+-----------------------PRACTICAL 3:JDBC WITH SWING ------------------
+
+Q1)registration form
+
+
+import java.sql.*;
+import javax.swing.*;
+import java.sql.SQLClientInfoException;
+
+
+try
+        {
+           String u= txtbxuser.getText();
+           String p= txtbxpass.getText();
+            Class.forName("com.mysql.jdbc.Driver");
+             Connection con = DriverManager.getConnection("jdbc:mysql://localhost/bhavya_22","root","Doshi@12");
+            String sql = "insert into user values(?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+                ps.setString(1,u);
+                ps.setString(2,p);
+                int i = ps.executeUpdate();
+                if (i>0)
+                {
+                    lblmsg.setText("registered Successfully");
+                   
+                }
+                else
+                {
+                    lblmsg.setText("Enable to register");
+                }
+           
+       }
+       catch( Exception ex )
+       {
+           System.out.print( ex );
+       }
+
+
+Q2)login form 
+
+
+
+import java.sql.*;
+import javax.swing.*;
+
+
+
+ try
+        {
+           String u= txtbxuser.getText();
+           String p= txtbxpass.getText();
+            Class.forName("com.mysql.jdbc.Driver");
+             Connection con = DriverManager.getConnection("jdbc:mysql://localhost/bhavya_22","root","Doshi@12");
+            String sql = " select * from user where username=? and password=?";
+            PreparedStatement ps = con.prepareStatement(sql);
+                ps.setString(1,u);
+                ps.setString(2,p);
+                ResultSet i = ps.executeQuery();
+                if (i.next()==false)
+                {
+                    lblmsg.setText("username or password no found please register ");
+                   
+                }
+                else
+                {
+                    lblmsg.setText("login Successful \n"+ "hello "+ u );
+                }
+           
+       }
+       catch( Exception ex )
+       {
+           System.out.print( ex );
+       }
+
+
+
+-------------------------PRACTICAL 4:STORE AND RETRIVE IMAGE IN DB-------------------
+
+
+Q1)store image
+
+
+
+package practical.pkg4;
+import java.sql.*;
+import java.io.*;
+
+
+public class Practical4 {
+
+    
+    public static void main(String[] args) {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost/bhavya_22","root","Doshi@12");
+            InputStream is =new FileInputStream("C:\\Users\\Bhavya Doshi\\OneDrive\\Pictures\\Screenshots\\demoimage.png");
+            String Q ="insert into student1 values(?,?,?,?)";
+            PreparedStatement st=con.prepareStatement(Q);
+            st.setInt(1,101);
+            st.setString(2,"xyz");
+            st.setDouble(3,88);
+            st.setBinaryStream(4, is);
+            int rs=st.executeUpdate();
+            if(rs>0)
+            {
+                System.out.println("Data Stored Sucessfully...");
+            }
+            else
+            {
+                System.out.print("Enable to store data");
+            }
+            con.close();
+       
+                }
+        catch(Exception ex){
+                    System.out.print(ex.toString());
+                    }
+            }
+    }
+             
+
+Q2)Retrive Image
+
+
+
+package practical4.pkg2;
+import java.sql.*;
+import java.io.*;
+
+
+public class Practical42 {
+
+ 
+    public static void main(String[] args) {
+        Connection con =null;
+        PreparedStatement ps=null;
+        OutputStream os =null;
+        InputStream is =null;
+         try{
+            Class.forName("com.mysql.jdbc.Driver");
+            
+                 con=DriverManager.getConnection("jdbc:mysql://localhost/bhavya_22","root","Doshi@12");
+                 String sql="select*from student1 where name = 'asd'";
+                 ps=con.prepareStatement(sql);
+                 ResultSet rs=ps.executeQuery();
+                 if(rs.next())
+                 {
+                     System.out.println("\n\t name ="+rs.getString(2));
+                     is = rs.getBinaryStream(4);
+                 }
+                 os=new FileOutputStream(new File("demoimage.png"));
+                 int data =0;
+                 while((data=is.read())!= -1)
+                 {
+                 os.write(data);
+         }
+                con.close();
+         }
+                    
+                  
+               
+                catch(ClassNotFoundException e){}
+                catch (SQLException e){}
+                catch(FileNotFoundException e){}
+                catch(IOException e){}
+                   
+                    
+         }
+        
+    }
+    
+
+
+
+---------------------PRACTICAL 5:SERVLET----------------
+
+
+Q1)Calculator
+
+-->.html
+
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="cal">
+            <b>Enter 1st Number:</b>
+            <input type="text" name="1Num" value=""/>
+            <b>Enter 2nd Number:</b>
+            <input type="text" name="2Num" value=""/>
+            <b>Choose Operation</b>
+            <select name="operators">
+                <option>Addition</option>
+                <option>Subtraction</option>
+                <option>Multiplication</option>
+                <option>Division</option>
+                
+            </select>
+            <input type="submit" value="Calculate" name="btncal"/>
+        </form>
+    </body>
+</html>
+
+
+-->.java
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet(urlPatterns = {"/cal"})
+public class cal extends HttpServlet {
+
+  
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            String n1=request.getParameter("1Num");
+            String n2=request.getParameter("2Num");
+            String op=request.getParameter("operators");
+            if(op.equals("Addition")){
+                out.println("<h1>"+"Addition of 2 Number is"+(Integer.parseInt(n1)+Integer.parseInt(n2))+"<h1/>");
+            }
+            else if (op.equals("Subtraction")){
+                out.println("<h1>"+"Subtraction of 2 Number is"+(Integer.parseInt(n1)-Integer.parseInt(n2))+"<h1/>");
+            }
+            else if (op.equals("Multiplication")){
+                out.println("<h1>"+"Multiplication of 2 Number is"+(Integer.parseInt(n1)*Integer.parseInt(n2))+"<h1/>");
+            }
+            else {
+                out.println("<h1>"+"Division of 2 Number is"+(Integer.parseInt(n1)/Integer.parseInt(n2))+"<h1/>");
+            }
+            
+        }
+    }
+ 
+------------------------------------[BY DEFAULT CODE ]---------------------------
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
+--------------------------------
+
+
+Q2)EMPLOYEE 
+
+
+-->.html
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="empdata">
+            <b>Enter Your Name</b>
+            <input type="text" name="name" value=""/>
+            <b>Enter Salary</b>
+            <input type="text" name="amt" value=""/>
+            <input type="submit" value="Submit"/>
+        </form>
+    </body>
+</html>
+
+
+-->.java
+
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet(urlPatterns = {"/empdata"})
+public class empdata extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            String name =request.getParameter("name");
+            String salary =request.getParameter("amt");
+            double sal =Integer.parseInt(salary);
+            double hra =0.3*sal;
+            double ta=0.2*sal;
+            double da=0.1*sal;
+            double total=sal+hra+ta+da;
+            out.println("<br>"+"Name of Employee"+name+"<br>");
+            out.println("Your Total salary"+total);
+        
+ 
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet empdata</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet empdata at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+------------------------------------[DEFAULT CODE ]---------------------------
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
+---------------------------------
+
+
+Q3) Student grade Card
+
+
+-->.html
+
+<html>
+    <head>
+        <title>Grade Card</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="GradeCard" >
+            <b>Enter Your Name</b>
+            <input type="text" name="name" value=""/><br><br>
+            <b>Enter Your Roll No</b>
+            <input type="text" name="rollno" value=""/><br><br>
+            <b>Enter Marks Of Any One Subject</b>
+            <input type="text" name="mks" value=""/><br><br>
+            <input type="submit" name="View Result" value="Submit"/>
+        </form>
+    </body>
+</html>
+
+
+-->.java
+
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet(urlPatterns = {"/GradeCard"})
+public class GradeCard extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            String name=request.getParameter("name");
+            String rn=request.getParameter("rollno");
+            String ms=request.getParameter("mks");
+            int marks=Integer.parseInt(ms);
+            out.println("Student Name:"+name);
+            out.println("Student Roll No:"+rn);
+            out.print("Marks Of One Subject:"+marks);
+            out.print(marks>=80);
+            if(marks>=80){
+                out.println("Your Grade is O");
+            }
+            else if(marks<=79 & marks>=70){
+                out.println("Your Grade is A+");
+            }
+            else if(marks<=69 & marks>=60){
+                out.println("Your Grade is A");
+            }
+            else if(marks<=59 & marks>=55){
+                out.println("Your Grade is B+");
+            }
+            else if(marks<=54 & marks>=50){
+                out.println("Your Grade is B");
+            }
+            else if(marks<=49 & marks>=45){
+                out.println("Your Grade is C");
+            }
+            else if(marks<=44 & marks>=40){
+                out.println("Your Grade is D");
+            }
+            else {
+            out.println("your failed");
+            }
+                
+            
+            
+            
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet GradeCard</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet GradeCard at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+----------------------------------[DEFAULT CODE]----------------------
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
+
+------------------------------
+
+Q4) login form
+
+
+-->.html
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="form">
+            Enter the Username: <input type="text" name="txtuname" value="" /><br><br>
+            Enter the Password: <input type="password" name="txtpass" value="" /><br><br>
+            <input type="submit" value="Submit" />
+
+            
+        </form>
+    </body>
+</html>
+
+
+
+-->.java
+
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+
+@WebServlet(urlPatterns = {"/form"})
+public class form extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            String name = request.getParameter("txtuname");
+            int pass = Integer.parseInt(request.getParameter("txtpass"));
+            if(name.equals("Bhavya") && pass == 1234)
+            {
+                out.print("Logged in Successfully");
+            }
+            else
+            {
+                out.print("Username or Password is Incorrect");
+            }
+        }
+    }
+
+
+--------------------------[ DEFAULT CODE ]-------------------
+@Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+}
+
+ ---------------------------------------------
+
+
+----------------------------------PRACTICAL 6:JDBC AND SERVLET -------------------------
+
+
+-->.html
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="insert">
+            Username :<input type="text" name="user" value="" /><br>
+            Password :<input type="text" name="pass" value="" /><br>
+            <input type="submit" value="Insert" />
+        </form>
+    </body>
+</html>
+
+
+------
+
+-->.Java servlet
+
+String user = request.getParameter("user");
+           String pass = request.getParameter("pass");
+           Class.forName("com.mysql.jdbc.Driver");
+           Connection con = DriverManager.getConnection("jdbc:mysql://localhost/sycs_228336", "pralex", "1906");
+           String sql = "insert into user values (?,?)";
+           PreparedStatement ps = con.prepareStatement(sql);
+           ps.setString(1,user);
+           ps.setString(2,pass);
+           int r = ps.executeUpdate();
+           if(r>0){
+           out.print("Inserted Successfully");
+           }
+
+
+-->Update record using servlet
+[Html
+Same code as insert
+Java servlet]
+Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/sycs_228336","pralex","1906");
+            String sql = "update user set pass = ? where user = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1,request.getParameter("pass"));
+            ps.setString(2,request.getParameter("user"));
+            int r = ps.executeUpdate();
+            if(r>0){
+            out.print("Updated Successfully");
+            }
+            else{
+            out.print("Invalid user");
+            }
+
+-->Delete record using servlet
+[Html
+Same code as insert
+Java servlet]
+
+String user = request.getParameter("user");
+          Class.forName("com.mysql.jdbc.Driver");
+          Connection con = DriverManager.getConnection("jdbc:mysql://localhost/sycs_228336","pralex","1906");
+          String sql = "delete from user where user = ?";
+          PreparedStatement ps= con.prepareStatement(sql);
+          ps.setString(1, user);
+          int r = ps.executeUpdate();
+          if(r>0){
+          out.print("Deleted Successfully");
+          }
+          else{
+          out.print("Inavlid user");
+          }
+          
+
+-->Display record using servlet
+[Html
+Same code as insert
+Java servlet]
+
+Class.forName("com.mysql.jdbc.Driver");
+           Connection con = DriverManager.getConnection("jdbc:mysql://localhost/sycs_228336","pralex","1906");
+           Statement st = con.createStatement();
+           String sql = "Select * from user where user = '"+request.getParameter("user")+"' ";
+           ResultSet rs = st.executeQuery(sql);
+           while(rs.next()){
+           out.println("Username : "+rs.getString(1)+"<br>");
+           out.println("Password : "+rs.getString(2)+"<br>");
+           }
+
+
+
+
+----------------------------------PRACTICAL 7:REQUEST DISPATCHER--------------------
+
+
+Q1) Forwad Method[Error: HTTP Status 404 - Not Found ]
+
+
+
+-->.html
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <form action="servlet" method="POST">
+                <h2>Login form to demonstrate RequestDispatcher forward()</h2><br>
+                <a>Enter your username:</a>
+                <input type="text" name="username"/>
+                <br>
+                <a>Enter your password</a> 
+                <input type="password" name="password"/>
+                <br>
+                <input type="submit" name="btn_submit" value="submit"/>
+            </form>
+            
+        </div>
+    </body>
+</html>
+
+---------------------------
+
+-->Servlet.java 
+
+try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+           
+        String n = request.getParameter("txtname");
+        String p = request.getParameter("txtpass");
+        out.println("Welcome Anurag");
+        if(p.isEmpty()){
+            RequestDispatcher rd = request.getRequestDispatcher("/index.html");
+            rd.include(request, response);
+        }
+        else {
+            RequestDispatcher rd = request.getRequestDispatcher("servlet2") ;
+            rd.forward(request, response);
+        }
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+            
+        }
+    }
+
+    
+}
+
+-----------------------------
+
+-->Servlet2.java
+
+
+try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("servlet 2");
+            String n = request.getParameter("txtname");
+            String p = request.getParameter("txtpass");
+            
+            out.println("Welcome " + n);
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet servlet2</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet servlet2 at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+}
+
+Q2) include method/Backward method
+
+
+-->.html
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action= "accounts" methods= "GET">
+            Enter the Latest Reading:<input type="text" name="read1" value=""/><br><br>
+            Enter the Previous Reading:<input type="text" name="read2" value=""/><br><br>
+            <input type="submit" value="Submit"/>
+            
+        </form>
+    </body>
+</html>
+
+---------------------------------------
+
+-->Billing.java
+
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet(urlPatterns = {"/Billing"})
+public class Billing extends HttpServlet {
+        protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            
+        }
+    }
+    @Override
+    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+    {
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
+        //Extract the client data from request object. Infact this is actually to be done by S1
+        int latestReading = Integer.parseInt(request.getParameter("read1"));
+
+        //For Previous reading
+        int previousReading = Integer.parseInt(request.getParameter("read2"));
+
+        //read rate per unit from req object
+        Object obj = request.getAttribute("unitRate");
+        Double d1 = (Double) obj;
+        double rate = d1;
+
+        //now left  is to prepare bill
+        int noofUnits = latestReading-previousReading;
+        double amountPayable = noofUnits*rate;
+
+        //Prepare response. This response is added to S1 response
+        out.println("Previous Reading: "+previousReading);
+        out.println("<br>Current Reading: "+latestReading);
+        out.println("<br>Bill Amount Rs."+amountPayable);
+    }
+
+
+----------------------------[Default Code]-----------------------------
+
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
+
+
+---------------------------------------------------
+
+-->accounts.java
+
+
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet(urlPatterns = {"/accounts"})
+public class accounts extends HttpServlet {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            
+        }
+    }
+
+    /**
+     *
+     * @param req
+     * @param res
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
+    public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
+    {
+        res.setContentType("text/html");
+        try (PrintWriter out = res.getWriter()) {
+            out.print("<u>Following are Your Bill Particulars</u><br><br>");
+            
+            
+            req.setAttribute("unitRate", 8.75);
+            
+           
+            RequestDispatcher rd = req.getRequestDispatcher("Billing");
+            
+           
+            rd.include(req, res);
+            
+            
+            out.print("<br><br>Please Pay the Bill Amount Before the 5th of Every Month to Avoid Penalty and Disconnection");
+        }
+    }
+
+
+----------------------------[Default Code ]--------------------------------
+
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
+
+------------------------------
+
+
+
+----------------------------PRACTICAL 8:JSP 1 ------------------------
+
+
+Q1)SQUARE,CUBE
+
+
+-->index.html
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="square.jsp">
+            Enter a Number:<input type="text" name="txtnum" value=""/><br><br>
+            <input type="submit" value="Submit"/>
+        </form>
+        <form action="cube.jsp">
+            Enter a Number:<input type="text" name="txtnum" value=""/><br><br>
+            <input type="submit" value="Submit"/>
+        </form>
+    </body>
+</html>
+
+
+
+----------------
+
+
+-->square.jsp
+
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Square Of a number</h1>
+        <% int num =Integer.parseInt(request.getParameter("txtnum"));%>
+        <%="Square of the Given Number is:"+(num*num)%>
+        
+    </body>
+</html>
+
+-------------------
+
+-->cube.jsp
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+       <h1>Cube Of a number</h1>
+        <% int num =Integer.parseInt(request.getParameter("txtnum"));%>
+        <%="Cube of the Given Number is:"+(num*num*num)%>
+    </body>
+</html>
+
+
+----------------
+
+
+Q2) number is even or odd
+
+
+-->index.html
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="evenodd.jsp">
+            Enter a Number:<input type="text" name="txtnum" value=""/><br><br>
+            <input type ="submit" value="Submit"/>
+             
+        </form>
+    </body>
+</html>
+
+-------------------
+
+
+-->evenodd.jsp
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <%
+            int num=Integer.parseInt(request.getParameter("txtnum"));
+            if(num%2==0)
+            {
+                out.print(num+"is an Even number");
+            }
+            else
+            {
+                out.print(num+"is an Odd number");
+            }
+            %>
+    </body>
+</html>
+
+
+-----------
+
+Q3)Multiplication of Table
+
+
+-->index.html
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="multi.jsp">
+            Enter a Number:<input type="text" name="txtnum" value=""/><br><br>
+            <input type="submit" value="Submit"/>
+        </form>
+    </body>
+</html>
+
+--------
+
+-->multi.jsp
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Multiplication of Table</h1>
+        <%
+            int num=Integer.parseInt(request.getParameter("txtnum"));
+            for(int i=1;i<=10;i++)
+            {
+                int m =num*i;
+                out.print(num+"x"+i+"="+m+"<br>");     
+            }
+            %>
+    </body>
+</html>
+
+------------
+
+Q3)Fibonacci
+
+
+-->index.html
+
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+           <form action="fibonacci.jsp">
+            Enter a Number Terms for the Sequences: <input type="text" name="txtnum" value="" /><br><br>
+            <input type="submit" value="Submit" />
+            </form>
+
+    </body>
+</html>
+
+--------
+
+-->fibonaaci.jsp
+
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Fibonacci Series</h1>
+                    <%
+                int num = Integer.parseInt(request.getParameter("txtnum"));
+                 int n1 = 0, n2 = 1;
+                 if(num <= 0)
+                 {
+                     out.print("Please Enter a Positive Number");
+                 }
+                 else if(num == 1)
+                 {
+                     out.print("Fibonacci Sequence Upto "+num+" Terms is "+n1);
+                 }
+                 else
+                 {
+                     out.print("Fibonacci Sequence Upto "+num+" is:<br>");
+                     out.print("<br>"+n1+"<br>"+n2);
+                     for(int i=2;i<num;i++)
+                     {
+                         int n3 = n1 + n2;
+                         n1 = n2;
+                         n2 = n3;
+                         out.print("<br>"+n3);
+                     }
+
+                 }
+            %>
+
+    </body>
+</html>
+
+------
+
+-------------------------PRACTICAL 9:JSP-1---------------------
+
+
+-->index.html
+
+
+<html>
+    <head>
+        <title>Jsp practical 9</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            
+            <form action="addjsp.jsp" method="POST">
+                <h1>  JSP practical 9  </h1>
+                <br><br>
+                <a>Enter your firstname :</a>
+                <input type="text" name="firstname"/><br>
+                <a>Enter your lastname :</a>
+                <input type="text" name="lastname"/><br>
+                <a>Enter your city name :</a>
+                <input type="text" name="city"/><br>
+                <a>Enter your email id :</a>
+                <input type="text" name="email"/><br>
+                <input type="submit" />
+            </form>
+            
+        </div>
+    </body>
+</html>
+
+
+----------------
+
+-->add.jsp
+
+
+<%@page contentType="text/html" pageEncoding="UTF-8"
+       import="java.io.*,java.util.*,java.sql.*,java.math.*"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>ADD JSP Page</title>
+    </head>
+    <body>
+        <% 
+         try{
+             
+        Class.forName("com.mysql.jdbc.Driver");
+      //  String sql ="jdbc://localhost//practical","root";
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/practical?useSSL=false&allowPublicKeyRetieval=true","root","12345");
+        
+        String sql = "insert into jspPr9(firstname,lastname,cityname,email_id) values(?,?,?,?)";
+        PreparedStatement st = con.prepareStatement(sql);
+        st.setString(1,request.getParameter("firstname").toString());
+        st.setString(2,request.getParameter("lastname").toString());
+        st.setString(3,request.getParameter("city").toString());
+        st.setString(4,request.getParameter("email").toString());
+        session.setAttribute("session_firstname",request.getParameter("firstname"));
+        session.setAttribute("session_lastname",request.getParameter("lastname"));
+       int i = st.executeUpdate();
+        if(i>0)
+        {
+        out.println("Record inserted");
+        con.close();
+        }
+         }
+        catch(Exception e)
+        {
+        out.println(e);
+        }
+        %>
+        <br>
+        <a href="updatejsp.jsp">Update</a>
+        
+    </body>
+</html>
+
+--------------
+
+-->update.jsp
+
+
+<%@page contentType="text/html" pageEncoding="UTF-8"
+       import="java.util.*,java.sql.*"
+        %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h2>Update for your first and last name </h2>
+        <br>
+         <form action="updatejsp.jsp" method="POST">
+                <h1>IF field left blank null will be recorded  </h1>
+                <br><br>
+                <a>Update your firstname :</a>
+                <input type="text" name="firstname_up"/><br>
+                <a>Update your lastname :</a>
+                <input type="text" name="lastname_up"/><br>
+                <a>Update your city name :</a>
+                <input type="text" name="city_up"/><br>
+                <a>Update your email id :</a>
+                <input type="text" name="email_up"/><br>
+                <input type="submit" />
+            </form>
+        <% 
+         try{
+             
+        Class.forName("com.mysql.jdbc.Driver");
+      //  String sql ="jdbc://localhost//practical","root";
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/practical?useSSL=false&allowPublicKeyRetieval=true","root","12345");
+    
+        String sql = " update jspPr9 set firstname = ?,lastname = ? ,cityname=?,email_id=? where firstname =? and lastname=?";
+        PreparedStatement st = con.prepareStatement(sql);
+        st.setString(1,request.getParameter("firstname_up").toString());
+        st.setString(2,request.getParameter("lastname_up").toString());
+        st.setString(3,request.getParameter("city_up").toString());
+        st.setString(4,request.getParameter("email_up").toString());
+        
+        String fname = (String) session.getAttribute("session_firstname");
+        st.setString(5,fname);
+        String lname = (String) session.getAttribute("session_lastname");
+        st.setString(6,lname);
+        int i = st.executeUpdate();
+        if(i>0)
+        {
+        out.println("Record updated");
+        con.close();
+        }
+         }
+        catch(NullPointerException e)
+        {
+        out.println(e);
+        }
+        %>
+       <a href="viewjsp.jsp">View data table</a> 
+    </body>
+</html>
+
+---------------
+
+-->delete.jsp
+
+
+<%@page contentType="text/html" pageEncoding="UTF-8"import="java.util.*,java.sql.*"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h2>Delete Record with respect to email id</h2>
+        <form action="deletejsp.jsp">
+            <a>Enter the email id :</a>
+            <input type="text" name="d_email" />
+            <input type="submit" value="delete"/>   
+        </form>
+        
+        <%
+       try{
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/practical?useSSL=false&allowPublicKeyRetieval=true","root","12345");
+        
+        String sql = "delete from jspPr9 where email_id=?";
+        PreparedStatement st = con.prepareStatement(sql);
+        st.setString(1,request.getParameter("d_email").toString());
+        int i = st.executeUpdate();
+        if(i >0)
+        {
+        out.println("Record deleted");
+        }
+       }
+       catch(Exception e)
+       {
+        
+       }
+            %>
+    </body>
+</html>
+
+
+-->viewjsp.jsp
+
+
+
+<%@page contentType="text/html" pageEncoding="UTF-8"
+        import="java.util.*,java.sql.*" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <%
+        try{
+             
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/practical?useSSL=false&allowPublicKeyRetieval=true","root","12345");
+        
+        String sql = "Select * from jspPr9";
+        PreparedStatement st = con.prepareStatement(sql);
+        
+        /*String fname = (String) session.getAttribute("session_firstname");
+        st.setString(1,fname);
+        String lname = (String) session.getAttribute("session_lastname");
+        st.setString(2,lname)*/
+        
+        ResultSet rs = st.executeQuery();
+         out.println("<table border=1>");
+    out.println("<tr><th>Firstname</th><th>Lastname</th><th>City</th><th>Email</th></tr>");
+        while(rs.next())
+        {
+       
+        out.println("<tr><td>" + rs.getString("firstname") + "</td><td>" + rs.getString("lastname") + "</td><td>" + rs.getString("cityname")
+                + "</td><td>" + rs.getString("email_id") + "</td></tr>");
+        }
+    out.println("</table>");
+        
+        rs.close();
+        st.close();
+        con.close();
+         }
+        catch(Exception e)
+        {
+        out.println(e);
+        }
+        %>
+        <a href="deletejsp.jsp"> Delete record</a>
+        
+        
+    </body>
+</html>
+
+
+
+
+
+
+-------------------------PRACTICAL 10:JAVABEANS---------------------
+
+Q1)name,password,age store them in an object
+
+
+-->index.html
+
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <form action="userdetails.jsp" method="POST">
+            Enter Your UserName: <input type="text" name="username" /><br><br>
+            Enter Your Password: <input type="password" name="password" /><br><br>
+            Enter Your Age:<input type="text" name="age" /><br><br>
+            <input type="submit" value="Register" />
+            
+        </form>
+    </body>
+</html>
+
+---------------------
+
+-->userdetails.jsp
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <jsp:useBean id="userinfo" scope="page" class="pp.StudentsBean" />
+        <jsp:setProperty name="userinfo" property="*" />
+        Your Entered Details Are as Follows:<br><br>
+        Name:<jsp:getProperty name="userinfo" property="username" /><br><br>
+        Password:<jsp:getProperty name="userinfo" property="password" /><br><br>
+        Age:<jsp:getProperty name="userinfo" property="age" /><br><br>
+    </body>
+</html>
+
+
+----------
+
+-->StudentsBean.java
+
+
+package pp;
+public class StudentsBean {
+    public StudentsBean() {
+    }
+    private String username;
+    private String password;
+    private String age;
+    
+    public String getAge() {
+        return age;
+    }
+    public void setAge(String age) {
+        this.age = age;
+    }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+   
+    public void setUsername(String username) {
+        this.username = username;
+    }
+}
+
+
+
+
+
+
+
+
+   
+    
+    
+ 
+
+
+
